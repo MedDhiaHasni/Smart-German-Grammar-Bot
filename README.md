@@ -38,23 +38,25 @@
 
 ## 📁 Project Structure
 
+```
 smart-german-grammar-bot/
-├── config/ # Settings loaded from .env
-│ └── settings.py
-├── src/
-│ ├── api/ # FastAPI routes
-│ ├── bot/ # Prompts and drill logic
-│ ├── models/ # Domain models (GermanNoun, ChatSession, ...)
-│ ├── services/ # DeepSeek client + grammar service
-│ ├── utils/ # Shared logger
-│ └── static/ # HTML / CSS / JS chat UI
-├── tests/ # Unit tests
-├── scripts/ # One-off dev scripts
-├── data/ # Runtime data (gitignored)
-├── logs/ # Log files (gitignored)
-├── .env.example # Template for environment variables
-├── pyproject.toml
-└── README.md
+config/
+    settings.py            # Settings loaded from .env
+src/
+    api/                    # FastAPI routes
+    bot/                    # Prompts and drill logic
+    models/                 # Domain models (GermanNoun, ChatSession, ...)
+    services/               # DeepSeek client + grammar service
+    utils/                  # Shared logger
+    static/                 # HTML / CSS / JS chat UI
+tests/                      # Unit tests
+scripts/                    # One-off dev scripts
+data/                       # Runtime data (gitignored)
+logs/                       # Log files (gitignored)
+.env.example                 # Template for environment variables
+pyproject.toml
+README.md
+```
 
 
 ---
