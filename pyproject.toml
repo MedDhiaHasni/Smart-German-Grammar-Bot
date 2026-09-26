@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smart-german-grammar-bot"
+version = "0.1.0"
+description = "A web-based German grammar tutor chatbot powered by DeepSeek."
+requires-python = ">=3.11"
+dependencies = [
+    "python-dotenv",
+     "httpx",
+]
+
+[tool.setuptools.packages.find]
+include = ["src*", "config*"]
