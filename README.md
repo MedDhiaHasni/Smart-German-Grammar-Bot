@@ -129,8 +129,8 @@ python tests/test_models.py
 - [x] Project skeleton + configuration
 - [x] Domain models (German nouns, cases, chat sessions)
 - [x] DeepSeek streaming client
-- [ ] Prompt engineering + grammar service
-- [ ] FastAPI backend with SSE streaming
+- [x] Prompt engineering + grammar service
+- [x] FastAPI backend with SSE streaming
 - [ ] Custom web chat UI
 - [ ] Deployment guide
 - [ ] Spaced repetition and progress tracking
