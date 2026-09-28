@@ -131,7 +131,7 @@ python tests/test_models.py
 - [x] DeepSeek streaming client
 - [x] Prompt engineering + grammar service
 - [x] FastAPI backend with SSE streaming
-- [ ] Custom web chat UI
+- [x] Custom web chat UI
 - [ ] Deployment guide
 - [ ] Spaced repetition and progress tracking
 - [ ] Pronunciation support
