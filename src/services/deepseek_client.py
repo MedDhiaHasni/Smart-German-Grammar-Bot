@@ -48,6 +48,15 @@ class DeepSeekClient:
                 "No DeepSeek API key configured. Set DEEPSEEK_API_KEY in .env."
             )
 
+        if (
+            self.api_key.startswith("placeholder")
+            or self.api_key == "your_deepseek_api_key_here"
+        ):
+            log.warning(
+                "DeepSeek API key is still a placeholder. "
+                "Chat will fail until you set a real key in .env."
+            )
+
     # ─── Public API ──────────────────────────────────────
 
     async def stream(
@@ -104,6 +113,16 @@ class DeepSeekClient:
                             response.status_code,
                             body[:500],
                         )
+                        if response.status_code in (401, 403):
+                            raise DeepSeekError(
+                                "Authentication failed — your DEEPSEEK_API_KEY "
+                                "is missing, invalid, or expired. Check .env."
+                            )
+                        if response.status_code == 429:
+                            raise DeepSeekError(
+                                "Rate limit reached. Wait a moment and try again, "
+                                "or upgrade your DeepSeek plan."
+                            )
                         raise DeepSeekError(
                             f"DeepSeek API returned HTTP "
                             f"{response.status_code}: {body[:200]}"

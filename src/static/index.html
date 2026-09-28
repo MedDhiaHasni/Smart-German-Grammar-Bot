@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Der Tutor · German Grammar Bot</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- ─── Sidebar ─────────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-flag">🇩🇪</span>
+        <div>
+          <h1>Der Tutor</h1>
+          <p class="brand-sub">German Grammar Bot</p>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h2>Drill Modes</h2>
+        <button class="mode-btn active" data-mode="general">
+          <span>💬</span> Free Chat
+        </button>
+        <button class="mode-btn" data-mode="der_die_das">
+          <span>🎯</span> der / die / das
+        </button>
+        <button class="mode-btn" data-mode="akkusativ">
+          <span>🎯</span> Akkusativ
+        </button>
+        <button class="mode-btn" data-mode="dativ">
+          <span>🎯</span> Dativ
+        </button>
+        <button class="mode-btn" data-mode="genitiv">
+          <span>🎯</span> Genitiv
+        </button>
+        <button class="mode-btn" data-mode="vocab">
+          <span>📚</span> Vocabulary
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <button id="new-chat-btn" class="ghost-btn">+ New Chat</button>
+        <p class="session-label">Session: <span id="session-id">—</span></p>
+      </div>
+    </aside>
+
+    <!-- ─── Main chat area ──────────────────────────── -->
+    <main class="chat">
+      <header class="chat-header">
+        <div>
+          <h2 id="current-mode-label">Free Chat</h2>
+          <p class="chat-header-sub" id="status-label">Connecting…</p>
+        </div>
+        <div class="dot" id="status-dot"></div>
+      </header>
+
+      <div class="messages" id="messages">
+        <!-- Welcome bubble -->
+        <div class="msg msg-assistant">
+          <div class="msg-bubble">
+            <p>Hallo! 👋 Ich bin <strong>Der Tutor</strong>, dein persönlicher Deutschlehrer.</p>
+            <p>Ask me anything about German — grammar, vocabulary, cases — or pick a drill mode on the left to start practicing.</p>
+          </div>
+        </div>
+      </div>
+
+      <form class="composer" id="composer">
+        <textarea
+          id="input"
+          rows="1"
+          placeholder="Ask a question or answer the drill…"
+          autocomplete="off"
+        ></textarea>
+        <button type="submit" id="send-btn" title="Send (Enter)">➤</button>
+      </form>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

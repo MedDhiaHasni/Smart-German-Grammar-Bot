@@ -15,7 +15,8 @@ from collections.abc import AsyncIterator
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 
 from config.settings import settings
 from src.api.schemas import ChatRequest, HealthResponse, NewSessionResponse
@@ -30,6 +31,10 @@ app = FastAPI(
     description="A web-based German grammar tutor powered by DeepSeek.",
     version="0.1.0",
 )
+
+# ─── Static frontend ─────────────────────────────────────
+_STATIC_DIR = settings.project_root / "src" / "static"
+app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
 
 # ─── CORS ────────────────────────────────────────────────
 # In dev we allow localhost origins so the frontend can call the API
@@ -68,6 +73,11 @@ async def health() -> HealthResponse:
         model=settings.deepseek_model,
         environment=settings.app_env,
     )
+
+@app.get("/")
+async def index() -> FileResponse:
+    """Serve the chat UI at the root path."""
+    return FileResponse(_STATIC_DIR / "index.html")
 
 
 @app.post("/session/new", response_model=NewSessionResponse)
