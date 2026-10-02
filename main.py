@@ -24,10 +24,13 @@ def main() -> None:
     )
     key_status = "✅ configured" if key_ok else "⚠️  placeholder (chat will fail)"
 
-    host = os.getenv("HOST", "127.0.0.1")
+    # Bind to 0.0.0.0 so the app is reachable from outside the container
+    # (Render requires this). Locally, 0.0.0.0 still means "localhost works".
+    host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", "8000"))
-    # Only enable hot-reload when running locally, not in the cloud.
-    reload = settings.is_development and host == "127.0.0.1"
+
+    # Enable hot-reload only when running locally (Render sets RENDER=true).
+    reload = settings.is_development and not os.getenv("RENDER")
 
     print(
         f"\n🇩🇪  Smart German Grammar Bot\n"
