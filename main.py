@@ -37,11 +37,17 @@ def main() -> None:
             "        replies will fail until you set a real key in .env.\n"
         )
 
+        import os
+
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "8000"))
+    reload = settings.is_development and host == "127.0.0.1"
+
     uvicorn.run(
         "src.api.app:app",
-        host="127.0.0.1",
-        port=8000,
-        reload=settings.is_development,
+        host=host,
+        port=port,
+        reload=reload,
         log_level=settings.log_level.lower(),
     )
 

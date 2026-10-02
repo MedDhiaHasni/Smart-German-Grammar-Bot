@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: smart-german-grammar-bot
+    runtime: python
+    plan: free
+    buildCommand: pip install -e .
+    startCommand: python main.py
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: DEEPSEEK_API_KEY
+        sync: false        # set manually in the Render dashboard
+      - key: DEEPSEEK_BASE_URL
+        value: https://openrouter.ai/api/v1
+      - key: DEEPSEEK_MODEL
+        value: deepseek/deepseek-chat-v3-0324:free
