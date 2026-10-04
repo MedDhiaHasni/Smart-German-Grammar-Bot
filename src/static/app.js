@@ -171,22 +171,32 @@ function handleSseFrame(frame, bubble, accumulated, onChunk) {
   // A frame may have multiple "event:"/"data:" lines. We only care about data.
   const lines = frame.split("\n");
   let event = "message";
-  const dataParts = [];
+  let data = null;
 
   for (const line of lines) {
-    if (line.startsWith("event:"))  event = line.slice(6).trim();
-    if (line.startsWith("data:"))   dataParts.push(line.slice(5).trimStart());
+    if (line.startsWith("event:")) event = line.slice(6).trim();
+    else if (line.startsWith("data:")) data = line.slice(5);
   }
-
-  const data = dataParts.join("\n");
 
   if (event === "done") return;
-  if (event === "error") {
-    throw new Error(data || "stream error");
+
+  // The server sends every payload JSON-encoded, so spaces are preserved.
+  let payload = "";
+  if (data !== null) {
+    try {
+      payload = JSON.parse(data);
+    } catch {
+      // Fallback: remove only the single SSE separator space
+      payload = data.replace(/^ /, "");
+    }
   }
 
-  if (data) {
-    onChunk(data);
+  if (event === "error") {
+    throw new Error(payload || "stream error");
+  }
+
+  if (payload) {
+    onChunk(payload);
     // Render the *accumulated* text so we never lose earlier tokens.
     bubble.innerHTML = renderText(accumulated.value);
   }

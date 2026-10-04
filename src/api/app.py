@@ -11,6 +11,7 @@ for a single-process dev server; swap for Redis/DB if we ever scale.
 
 from __future__ import annotations
 
+import json
 from collections.abc import AsyncIterator
 
 from fastapi import FastAPI, HTTPException
@@ -28,7 +29,7 @@ log = get_logger(__name__)
 
 app = FastAPI(
     title="Smart German Grammar Bot",
-    description="A web-based German grammar tutor powered by DeepSeek.",
+    description="A web-based German grammar tutor powered by free LLMs via OpenRouter.",
     version="0.1.0",
 )
 
@@ -74,6 +75,7 @@ async def health() -> HealthResponse:
         environment=settings.app_env,
     )
 
+
 @app.get("/")
 async def index() -> FileResponse:
     """Serve the chat UI at the root path."""
@@ -98,7 +100,8 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:
     Stream the assistant's reply as Server-Sent Events.
 
     The frontend opens this endpoint with fetch() and reads the body
-    incrementally; every chunk is a `data: <token>\\n\\n` line.
+    incrementally. Every chunk is a `data: <json-string>` frame, where the
+    payload is JSON-encoded so spaces and newlines inside tokens survive.
     """
     session = _get_or_create_session(req.session_id)
 
@@ -109,14 +112,11 @@ async def chat_stream(req: ChatRequest) -> StreamingResponse:
     async def token_generator() -> AsyncIterator[str]:
         try:
             async for token in _service.stream_reply(session, req.message):
-                # SSE wire format: "data: <payload>\n\n"
-                # Newlines inside a token must be escaped as separate
-                # data: lines. We do a minimal escape here.
-                safe = token.replace("\r", "")
-                yield f"data: {safe}\n\n"
+                # JSON-encode so spaces and newlines survive the wire intact.
+                yield f"data: {json.dumps(token)}\n\n"
         except DeepSeekError as exc:
             log.error("DeepSeek error: %s", exc)
-            yield f"event: error\ndata: {exc}\n\n"
+            yield f"event: error\ndata: {json.dumps(str(exc))}\n\n"
         finally:
             # Signal clean end of stream so the client knows
             yield "event: done\ndata: [DONE]\n\n"
