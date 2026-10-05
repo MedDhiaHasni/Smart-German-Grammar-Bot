@@ -1,6 +1,7 @@
 /* ─────────────────────────────────────────────────────────
    Der Tutor — frontend logic
-   Handles: session mgmt, sending messages, streaming SSE tokens.
+   Handles: session mgmt, sending messages, streaming SSE tokens,
+   welcome hero + suggestion cards.
    ───────────────────────────────────────────────────────── */
 
 const API = "";  // same origin
@@ -24,6 +25,10 @@ let state = {
   streaming: false,
 };
 
+// Saved copy of the welcome hero so "New Chat" can restore it.
+const welcomeEl = document.getElementById("welcome");
+const heroHTML = welcomeEl ? welcomeEl.outerHTML : "";
+
 /* ─── Utilities ──────────────────────────────────────── */
 
 function setStatus(text, kind /* "online" | "streaming" | "error" */) {
@@ -40,11 +45,17 @@ function escapeHtml(s) {
     .replaceAll(">", "&gt;");
 }
 
-/* Very small markdown-ish renderer: bold + inline code. */
-function renderText(raw) {
+/* Small markdown-ish renderer: bold + inline code + colored articles. */
+function renderText(raw, colorArticles = true) {
   let s = escapeHtml(raw);
   s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+  if (colorArticles) {
+    s = s.replace(
+      /\b(der|die|das)\b/gi,
+      (m) => `<span class="art art-${m.toLowerCase()}">${m}</span>`
+    );
+  }
   return s;
 }
 
@@ -104,7 +115,7 @@ async function sendMessage(text) {
   if (!text.trim() || state.streaming) return;
   if (!state.sessionId) await createSession();
 
-  appendMessage("user", renderText(text));
+  appendMessage("user", renderText(text, false));
   els.input.value = "";
   els.input.style.height = "auto";
 
@@ -224,6 +235,16 @@ function bindComposer() {
   });
 }
 
+/* ─── Suggestion cards (welcome hero) ────────────────── */
+
+function bindSuggestions() {
+  // Event delegation, so it keeps working after the hero is restored.
+  els.messages.addEventListener("click", (e) => {
+    const card = e.target.closest(".suggest");
+    if (card) sendMessage(card.dataset.prompt);
+  });
+}
+
 /* ─── New chat ───────────────────────────────────────── */
 
 function bindNewChat() {
@@ -232,11 +253,9 @@ function bindNewChat() {
     if (state.sessionId) {
       fetch(`${API}/session/${state.sessionId}`, { method: "DELETE" }).catch(() => {});
     }
-    els.messages.innerHTML = "";
-    appendMessage(
-      "assistant",
-      `<p>New session started. What would you like to practice? 🎓</p>`
-    );
+    // Bring the welcome hero back instead of a plain message.
+    els.messages.innerHTML = heroHTML;
+    els.messages.scrollTop = 0;
     await createSession();
   });
 }
@@ -246,6 +265,7 @@ function bindNewChat() {
 (async function init() {
   bindComposer();
   bindModeButtons();
+  bindSuggestions();
   bindNewChat();
   await createSession();
   setStatus("Online", "online");
