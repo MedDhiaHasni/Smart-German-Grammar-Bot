@@ -1,60 +1,70 @@
-# 🇩🇪 Smart German Grammar Bot
+# Smart German Grammar Bot
 
-> A web-based German grammar tutor chatbot powered by a large language model.
-> Chat freely about grammar, vocabulary, and cases — or launch guided drills
-> like *der/die/das* quizzes with instant feedback.
+A web-based German grammar tutor powered by a large language model. Chat freely about grammar, vocabulary, and cases, or start a guided drill such as an *der / die / das* quiz with instant feedback.
 
-🔗 **Live demo:** https://smart-german-grammar-bot.onrender.com
+**Live demo:** https://smart-german-grammar-bot.onrender.com
 
-> ⏱️ *First load may take ~30–60 seconds — the free-tier host sleeps after inactivity.*
+> The demo runs on a free-tier host that sleeps after inactivity. The first load may take 30 to 60 seconds.
+
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Configuration](#configuration)
+- [Running Tests](#running-tests)
+- [Deployment](#deployment)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+- [Author](#author)
 
 ---
 
-## ✨ Features
+## Features
 
-- 💬 **Free chat mode** — ask anything about German grammar, vocabulary, or usage
-- 🎯 **Guided drill modes** — structured practice for:
-  - `der / die / das` (noun articles)
-  - Nominativ, Akkusativ, Dativ, Genitiv
+- **Free chat mode:** ask anything about German grammar, vocabulary, or usage.
+- **Guided drill modes:** structured practice for:
+  - Noun articles (`der / die / das`)
+  - The four cases: Nominativ, Akkusativ, Dativ, Genitiv
   - Vocabulary building
-- ⚡ **Streaming responses** — answers appear word-by-word, like ChatGPT
-- 🧠 **Session memory** — the bot remembers the current conversation
-- 🔁 **Automatic model fallback** — if a free model is retired or rate-limited, the bot switches to another free model
-- 🎨 **Custom web UI** — dark-themed, modern, no framework bloat
-- 🔒 **Secure by design** — API keys stay server-side, never in the browser
-
-> 🚀 **Roadmap:** this is the foundation of what will grow into a full
-> German learning bot — with spaced repetition, progress tracking,
-> pronunciation, and more.
+- **Streaming responses:** answers appear word by word as they are generated.
+- **Session memory:** the bot remembers the current conversation.
+- **Automatic model fallback:** if a free model is retired or rate-limited, the bot switches to another free model.
+- **Welcome screen:** suggested prompts to start a conversation with one click.
+- **Article highlighting:** `der`, `die`, and `das` are color-coded in the bot's replies.
+- **Custom web interface:** dark theme, responsive layout, no frontend framework.
+- **Server-side secrets:** API keys stay on the server and are never exposed to the browser.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-| Layer      | Technology                                       |
-|------------|--------------------------------------------------|
-| Backend    | Python 3.12+ · FastAPI · Uvicorn                 |
-| AI Model   | LLM via OpenRouter (OpenAI-compatible API)       |
-| Frontend   | Vanilla HTML · CSS · JavaScript (SSE streaming)  |
-| Config     | python-dotenv                                    |
-| Testing    | Plain Python (pytest-compatible)                 |
-| Deployment | Render (free tier) · auto-deploy on `git push`   |
+| Layer      | Technology                                      |
+|------------|-------------------------------------------------|
+| Backend    | Python 3.12+, FastAPI, Uvicorn                  |
+| AI model   | LLM via OpenRouter (OpenAI-compatible API)      |
+| Frontend   | Vanilla HTML, CSS, and JavaScript (SSE streaming) |
+| Config     | python-dotenv                                   |
+| Testing    | Plain Python (pytest-compatible)                |
+| Deployment | Render (free tier), auto-deploy on `git push`   |
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 smart-german-grammar-bot/
 ├── config/
 │   └── settings.py        # Settings loaded from .env
 ├── src/
-│   ├── api/               # FastAPI routes + SSE streaming
+│   ├── api/               # FastAPI routes and SSE streaming
 │   ├── bot/               # Prompts and drill logic
 │   ├── models/            # Domain models (GermanNoun, ChatSession, ...)
-│   ├── services/          # LLM client + grammar service
+│   ├── services/          # LLM client and grammar service
 │   ├── utils/             # Shared logger
-│   └── static/            # HTML / CSS / JS chat UI
+│   └── static/            # HTML, CSS, and JS chat UI
 ├── tests/                 # Unit tests
 ├── scripts/               # One-off dev scripts
 ├── data/                  # Runtime data (gitignored)
@@ -68,7 +78,7 @@ smart-german-grammar-bot/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone the repository
 
@@ -97,7 +107,7 @@ python -m pip install -e .
 
 ### 4. Configure environment variables
 
-Copy the template and fill in your API key:
+Copy the template and add your API key:
 
 ```bash
 cp .env.example .env
@@ -111,24 +121,33 @@ DEEPSEEK_BASE_URL=https://openrouter.ai/api/v1
 DEEPSEEK_MODEL=openrouter/free
 ```
 
-> 💡 **Get a free API key:** [OpenRouter](https://openrouter.ai/keys) offers free
-> access to many capable models. Browse the current free catalog at
-> [openrouter.ai/models?max_price=0](https://openrouter.ai/models?max_price=0).
->
-> `openrouter/free` automatically routes to an available free model. Free models
-> come and go, so the bot also falls back to other free models if one fails.
+A free API key can be created at [openrouter.ai/keys](https://openrouter.ai/keys). See [Configuration](#configuration) for details on each variable.
 
-### 5. Run the app
+### 5. Run the application
 
 ```bash
 python main.py
 ```
 
-Then open http://localhost:8000 in your browser.
+Open http://localhost:8000 in your browser.
 
 ---
 
-## 🧪 Running Tests
+## Configuration
+
+| Variable            | Description                                                        |
+|---------------------|--------------------------------------------------------------------|
+| `DEEPSEEK_API_KEY`  | OpenRouter API key (starts with `sk-or-`)                          |
+| `DEEPSEEK_BASE_URL` | API base URL. Use `https://openrouter.ai/api/v1`                   |
+| `DEEPSEEK_MODEL`    | Model identifier. Use `openrouter/free` to route to a free model   |
+
+The variable names retain the `DEEPSEEK_` prefix for historical reasons. They apply to any OpenAI-compatible provider, including OpenRouter.
+
+**About the model setting.** `openrouter/free` routes each request to an available free model. Free models are retired regularly, so a router avoids breakage when a specific model disappears. The client also falls back to other free models automatically if a request fails. The current catalog is available at [openrouter.ai/models?max_price=0](https://openrouter.ai/models?max_price=0).
+
+---
+
+## Running Tests
 
 ```bash
 python tests/test_models.py
@@ -136,58 +155,60 @@ python tests/test_models.py
 
 ---
 
-## ☁️ Deployment
+## Deployment
 
-The app is deployed on [Render](https://render.com) (free tier) and
-auto-deploys on every push to `main`.
+The application is deployed on [Render](https://render.com) (free tier) and redeploys automatically on every push to `main`.
 
 Configuration lives in `render.yaml`:
 
 - **Build:** `pip install -e .`
 - **Start:** `python main.py`
-- **Environment:** `DEEPSEEK_API_KEY` is set as a secret in the Render dashboard
+- **Environment:** `DEEPSEEK_API_KEY` is set as a secret in the Render dashboard.
 
-> ⚠️ **Note:** Free-tier services spin down after 15 minutes of inactivity.
-> The first request after that takes 30–60 seconds to wake the server.
+**Notes**
 
-> ⚠️ **Note:** Environment variables set in the Render dashboard override
-> `render.yaml`. If you change the model, update `DEEPSEEK_MODEL` in the
-> dashboard's **Environment** tab too.
+- Free-tier services spin down after 15 minutes of inactivity. The first request after that takes 30 to 60 seconds to wake the server.
+- Environment variables set in the Render dashboard override the values in `render.yaml`. To change the model, update `DEEPSEEK_MODEL` in the dashboard's **Environment** tab.
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
-- [x] Project skeleton + configuration
+**Completed**
+
+- [x] Project skeleton and configuration
 - [x] Domain models (German nouns, cases, chat sessions)
 - [x] Streaming LLM client
-- [x] Prompt engineering + grammar service
+- [x] Prompt engineering and grammar service
 - [x] FastAPI backend with SSE streaming
 - [x] Custom web chat UI
-- [x] Deployed live (Render free tier)
+- [x] Deployment on Render (free tier)
 - [x] Automatic fallback between free models
+
+**Planned**
+
 - [ ] Persistent sessions (survive restarts)
 - [ ] Spaced repetition and progress tracking
-- [ ] Pronunciation support (browser TTS)
-- [ ] User accounts & saved history
+- [ ] Pronunciation support (browser text-to-speech)
+- [ ] User accounts and saved history
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-This is a personal learning project, but suggestions and issues are welcome.
-Feel free to open an issue or submit a pull request.
-
----
-
-## 📜 License
-
-MIT License — see [LICENSE](LICENSE) for details.
+This is a personal learning project, but suggestions and issues are welcome. Feel free to open an issue or submit a pull request.
 
 ---
 
-## 👤 Author
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+## Author
 
 **Med Dhia Hasni**
 Full Stack Developer
+
 [GitHub](https://github.com/MedDhiaHasni)
